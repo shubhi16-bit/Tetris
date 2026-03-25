@@ -5,7 +5,7 @@ import { useInterval } from './hooks/useInterval';
 import { usePlayer } from './hooks/usePlayer';
 import { useStage } from './hooks/useStage';
 
-const BENCHMARK_SCORE = 400;
+const BENCHMARK_SCORE = 300;
 
 const Tetris: React.FC = () => {
   const [dropTime, setDropTime] = useState<number | null>(null);
