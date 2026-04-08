@@ -12,7 +12,6 @@ const Tetris: React.FC = () => {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [hasWon, setHasWon] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
-  const [lines, setLines] = useState<number>(0);
   const [floatingScores, setFloatingScores] = useState<{ id: number; val: number }[]>([]);
   
   const gameAreaRef = useRef<HTMLDivElement>(null);
@@ -34,7 +33,7 @@ const Tetris: React.FC = () => {
       const linePoints = [40, 100, 300, 1200];
       const addedPoints = linePoints[rowsCleared - 1];
       setScore(prev => prev + addedPoints);
-      setLines(prev => prev + rowsCleared);
+
       const newId = Date.now();
       setFloatingScores(prev => [...prev, { id: newId, val: addedPoints }]);
       setTimeout(() => setFloatingScores(prev => prev.filter(s => s.id !== newId)), 1200);
@@ -45,7 +44,9 @@ const Tetris: React.FC = () => {
     setStage(createStage());
     setDropTime(800);
     resetPlayer();
-    setScore(0); setLines(0); setGameOver(false); setHasWon(false);
+    setScore(0);
+    setGameOver(false);
+    setHasWon(false);
     setTimeout(() => gameAreaRef.current?.focus(), 0);
   };
 
@@ -61,6 +62,7 @@ const Tetris: React.FC = () => {
   const move = (e: React.KeyboardEvent) => {
     if (gameOver) return;
     if ([32, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
+
     if (e.keyCode === 37) movePlayer(-1);
     else if (e.keyCode === 39) movePlayer(1);
     else if (e.keyCode === 40) drop();
@@ -105,8 +107,12 @@ const Tetris: React.FC = () => {
           <div style={gridStyle}>
             {stage.map((row, y) => row.map((cell, x) => (
                 <div key={`${x}-${y}`} className={cell[1] === 'clear' && rowsCleared > 0 ? 'row-clearing' : ''} style={{
-                  width: '25px', height: '25px', border: '1px solid rgba(0, 255, 255, 0.1)',
-                  background: cell[0] === 0 ? 'transparent' : `rgba(${TETROMINOS[cell[0] as keyof typeof TETROMINOS].color}, 0.9)`,
+                  width: '25px',
+                  height: '25px',
+                  border: '1px solid rgba(0, 255, 255, 0.1)',
+                  background: cell[0] === 0
+                    ? 'transparent'
+                    : `rgba(${TETROMINOS[cell[0] as keyof typeof TETROMINOS].color}, 0.9)`,
                 }} />
             )))}
           </div>
@@ -114,9 +120,7 @@ const Tetris: React.FC = () => {
           {(gameOver || !dropTime) && (
             <div style={missionOverlayStyle}>
               {hasWon ? (
-                
                 <div className="reward-box-hud">
-                  
                   <h3>CONGRATULATIONS !!</h3>
                   <h4 className="unlocked-tag">YOU HAVE UNLOCKED </h4>
                   <div className="unlocked-item">RGB LIGHTS</div>
@@ -129,7 +133,9 @@ const Tetris: React.FC = () => {
                 <div style={{textAlign: 'center', padding: '20px'}}>
                   <h2 className="logo-text" style={{fontSize: '1.8rem', color: '#00ffff', marginBottom: '10px'}}>TETRIS</h2>
                   <p style={{fontSize: '0.8rem', marginBottom: '20px', color: '#8899a6'}}>Target Score: {BENCHMARK_SCORE}</p>
-                  <button onClick={startGame} className={`start-btn ${gameOver ? 'retry-led' : ''}`}>[ {gameOver ? 'RETRY' : 'START'} ]</button>
+                  <button onClick={startGame} className={`start-btn ${gameOver ? 'retry-led' : ''}`}>
+                    [ {gameOver ? 'RETRY' : 'START'} ]
+                  </button>
                 </div>
               )}
             </div>
@@ -137,14 +143,15 @@ const Tetris: React.FC = () => {
         </div>
 
         <aside style={sideColumnStyle}>
-            <div className="cyber-box">
-                <span className="cyber-label">KEY COMMANDS</span>
-                <div className="key-row"><span className="key-cyan">↔</span> <span>MOVE</span></div>
-                <div className="key-row"><span className="key-cyan">↑</span> <span>ROTATE</span></div>
-                <div className="key-row"><span className="key-cyan">↓</span> <span>DROP</span></div>
-                <div className="key-row"><span className="key-cyan">SPACE</span> <span>HARD DROP</span></div>
-            </div>
+          <div className="cyber-box">
+            <span className="cyber-label">KEY COMMANDS</span>
+            <div className="key-row"><span className="key-cyan">↔</span> <span>MOVE</span></div>
+            <div className="key-row"><span className="key-cyan">↑</span> <span>ROTATE</span></div>
+            <div className="key-row"><span className="key-cyan">↓</span> <span>DROP</span></div>
+            <div className="key-row"><span className="key-cyan">SPACE</span> <span>HARD DROP</span></div>
+          </div>
         </aside>
+
       </div>
     </div>
   );
@@ -161,4 +168,4 @@ const cornerTR: React.CSSProperties = { position: 'absolute', top: 8, right: 8, 
 const cornerBL: React.CSSProperties = { position: 'absolute', bottom: 8, left: 8, width: 12, height: 12, borderBottom: '2px solid #00ffff', borderLeft: '2px solid #00ffff' };
 const cornerBR: React.CSSProperties = { position: 'absolute', bottom: 8, right: 8, width: 12, height: 12, borderBottom: '2px solid #00ffff', borderRight: '2px solid #00ffff' };
 
-export default Tetris;	
+export default Tetris;
